@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @AllArgsConstructor
+//add possibility for method to return objects
 @Accessors(chain = true)
 public class Post {
     private int userId;

@@ -13,4 +13,12 @@ public class TestUtils {
             return users;
         }
 
+        public static List<Car> getCars(){
+            List<Car> cars = new ArrayList<>();
+
+            cars.add(new Car("BMW", 300));
+            cars.add(new Car("Audi", 150));
+            return cars;
+        }
+
 }

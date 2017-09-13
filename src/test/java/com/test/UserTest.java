@@ -8,6 +8,8 @@ import io.restassured.specification.RequestSpecification;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.test.TestUtils.getPeople;
@@ -30,6 +32,7 @@ public class UserTest {
                 .build();
     }
 
+    //Assert in body
     @Test
     public void getSingleUserTest(){
         given().spec(spec).
@@ -58,6 +61,12 @@ public class UserTest {
     }
 
     @Test
+    public void getSingleUserXmlTest(){
+        Person actualPerson = given().spec(spec).expect().statusCode(200).when().get("single-user/xml").as(Person.class);
+        assertEquals(actualPerson, getPeople().get(0));
+    }
+
+    @Test
     public void getMultipleUsersWithObjectMapper(){
         List<Person> personsExpected = getPeople();
         String json = given().spec(spec).get("/persons/json").asString();
@@ -66,7 +75,21 @@ public class UserTest {
         assertEquals(personsActual, personsExpected);
     }
 
+    @Test
+    public void getMultipleUsersXmlTest(){
+        List<Person> personsExpected = getPeople();
 
+        People people = given().spec(spec).get("/persons/xml").as(People.class);
+        assertEquals(people.getPerson(), personsExpected);
+    }
+
+    @Test
+    public void getMultipleUsersJsonTest(){
+        List<Person> expectedPersons = getPeople();
+
+        People people = given().spec(spec).get("persons/json").as(People.class);
+        assertEquals(people.getPerson(), expectedPersons);
+    }
 }
 
 
