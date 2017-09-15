@@ -10,12 +10,15 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.test.TestUtils.getPeople;
+import static io.restassured.RestAssured.expect;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class UserTest {
 
@@ -89,6 +92,28 @@ public class UserTest {
 
         People people = given().spec(spec).get("persons/json").as(People.class);
         assertEquals(people.getPerson(), expectedPersons);
+    }
+
+    @Test
+    public void getJsonMapKeyValueTest(){
+        MyPairRS pairRS = given().spec(spec).
+                expect().statusCode(200).when().get("detail/json/map").as(MyPairRS.class);
+
+        assertTrue(pairRS.getMap().containsValue("Comedy"));
+        assertTrue(pairRS.getMap().containsKey(new MyPair("Abbott", "Costello")));
+
+        HashMap<MyPair, String> expectedMap = new HashMap<>();
+        expectedMap.put(new MyPair("Abbott", "Costello"), "Comedy");
+        assertTrue(pairRS.getMap().equals(expectedMap));
+    }
+
+    @Test
+    public void getPersonWithAuthenticationTest(){
+        given().spec(spec).
+        expect().statusCode(401).when().get("/secure/person");
+
+        expect().statusCode(200).
+                given().auth().basic("admin", "admin").get("/secure/person");
     }
 }
 
